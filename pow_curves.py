@@ -66,12 +66,14 @@ n_train = n if args.n_train == None else args.n_train    # can specify training 
 prop_outliers = args.prop_outliers
 
 # Wset
-np.random.seed(42)   # Wset should be same for all
+np.random.seed(139)   # Wset should be same for all
 Wset = np.random.uniform(size=(50,50)) * 6 - 3
 
 n_outliers = int(np.ceil(m * prop_outliers))
 nonzero = np.array(range(m))[:n_outliers]    # the indices of the outliers
 nulls = np.array(range(m))[n_outliers:] 
+
+# Loop through the dataset, 
 
 for amp in amps:
     # We simulate the data and then train SVM on it
@@ -134,3 +136,9 @@ plt.grid(alpha=0.5)
 plt.legend(fontsize=12)
 plt.savefig(file_path, dpi=300, bbox_inches='tight')
 plt.close()
+
+#Section 6.2: Implementation of p-values  (V_i \geq V_{n+j} is either the plit conformal or full-conformal function)
+# Implementation - split conformal it's good/ full conformal it's bad.
+# Use the Adadetect from the paper.
+# Full conformal p-values, split 
+#PALMRT paper - review it. 

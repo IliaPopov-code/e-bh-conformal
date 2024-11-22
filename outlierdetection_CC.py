@@ -151,6 +151,8 @@ for i, seed in enumerate(seeds):
     # random seed
     np.random.seed(seed) 
     
+    # Loop through the dataset, 
+
     # generate data
     Xtrain = gen_data(Wset, n_train, 1)
     Xcalib = gen_data(Wset, n, 1)
