@@ -77,8 +77,6 @@ print(args)
 filepath = f'results/{args.name}/'
 os.makedirs(filepath, exist_ok=1)    # name should be the results filepath
 
-
-
 ### process the arguments
 # config
 seeds = []
@@ -130,7 +128,7 @@ print(f'true nonnulls: {sorted(nonzero)}')
 
 
 # alpha details
-alpha_fdr = args.alpha_fdr    # fdr target
+alpha_fdr = args.alpha_fdr  # fdr target
 alpha_cc = alpha_fdr  *  args.acc_factor   # default is alpha_fdr times 1
 use_cs = True if args.rel_mc_error != None else False
 
