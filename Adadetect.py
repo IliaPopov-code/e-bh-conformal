@@ -139,7 +139,7 @@ class AdaDetectDE(AdaDetectBase):
             xnull = xnull_calib
 
         # compute scores 
-        self.test_statistics = self.scoring_fn.score_samples(x) 
+        self.test_statistics = self.scoring_fn.score_samples(x)
         self.null_statistics = self.scoring_fn.score_samples(xnull) 
 
 

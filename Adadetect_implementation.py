@@ -22,27 +22,17 @@ from utils.ci_sequence import get_alpha_cs, get_rho, hedged_cs, asy_cs, asy_log_
 from utils.generating_data import *
 
 from Adadetect import AdaDetectDE, AdaDetectERM
+from sklearn.ensemble import IsolationForest
 
 from cc_utils.conformal import conformal
 
-
-class SVMScoringFn:
-    def __init__(self, nu, kernel, gamma):
-        self.classifier = svm.OneClassSVM(nu=nu, kernel=kernel, gamma=gamma)
-
-    def fit(self, xtrain, x_null_train):
-        self.classifier.fit(x_null_train)
-
-    def score_samples(self, X):
-        return -1 * self.classifier.score_samples(X)
-
 #HYPERPARAMETERS
-seeds = np.arange(1,100)
-alpha_fdr = 0.3
+seeds = np.arange(1,25)
+alpha_fdr = 0.1
 name = "Ada"
 m = 500 #number of points in test
 n = 1000 #number of points in the calibration
-prop_outliers = 0.5 #proportion of outlier (pi) in the experiement
+prop_outliers = 0.1 #proportion of outlier (pi) in the experiement
 
 # details
 amps = np.arange(2,4,0.1) # we create a range of parameters to visualize power curve
@@ -55,7 +45,6 @@ THETA = np.zeros(50)
 p_theta = 6 
 THETA[:p_theta,] = np.array([0.3, 0.3, 0.2, 0.2, 0.1, 0.1]) 
 THETA = THETA.reshape((50,1))
-
 
 ### make directories
 filepath = f'results/{name}/'
@@ -79,6 +68,7 @@ for seed in seeds:
         # We simulate the data and then train SVM on it
         Xtrain = gen_data(Wset, n_train, 1)
         Xcalib = gen_data(Wset, n, 1)
+        Xnull = np.concatenate([Xtrain, Xcalib]) 
 
         Xtest0 = gen_data_weighted(Wset, m-n_outliers, 1, THETA)    # inliers 
         Xtest1 = gen_data_weighted(Wset, n_outliers, amp, THETA)    # outliers
@@ -89,13 +79,13 @@ for seed in seeds:
 
         #Initializing the Adadetect
         scoring_fn = svm.OneClassSVM(nu=0.004, kernel="rbf", gamma=0.1)
-        adadetect = AdaDetectDE(scoring_fn=scoring_fn, f0_known=True)
+        scoring_fn_new = IsolationForest(random_state=0)
+        adadetect = AdaDetectERM(scoring_fn=scoring_fn_new)
         
         #We investigate the simple setting
-        rej = adadetect.apply(Xtest, level=alpha_fdr, xnull=Xtrain)
-        print(rej)
+        rej = adadetect.apply(Xtest, level=alpha_fdr, xnull=Xnull)
 
-        # adadetect output baseline
+        # adadetect output
         powers.append(evaluate(rej, nonzero)['power'])
     
     iteration += 1 

@@ -64,7 +64,7 @@ n_train = n if args.n_train == None else args.n_train    # can specify training 
 prop_outliers = args.prop_outliers
 
 # Wset
-seeds = np.arange(1,100,2)
+seeds = np.arange(1,100,1)
 avg_power = np.zeros(len(amps))
 iteration = 0
 
